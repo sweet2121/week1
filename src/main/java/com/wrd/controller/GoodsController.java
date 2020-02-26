@@ -23,7 +23,7 @@ import com.wrd.domain.Brand;
 import com.wrd.domain.Condition;
 import com.wrd.domain.Goods;
 import com.wrd.service.GoodsService;
-//说明
+//说明  hhh
 @Controller
 public class GoodsController {
 
