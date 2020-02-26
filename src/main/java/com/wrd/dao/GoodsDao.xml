@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wrd.dao.GoodsDao">
+  
+	<select id="list" resultMap="goodsMap">
+		select goods.* from goods join gb on goods.gid=gb.gid
+		<where>
+			<!-- <if test="bbrand!=null and bbrand!=''">
+				and gb.bid in(select bid from brand where bbrand like '%${bbrand}%')
+			</if>
+			<if test="btype!=null and btype!=''">
+				and gb.bid in(select bid from brand where btype like '%${btype}%')
+			</if> -->
+			<if test="bbrand!=null and bbrand!=''">
+				and goods.bbrand like '%${bbrand}%'
+			</if>
+			<if test="btype!=null and btype!=''">
+				and goods.btype like '%${btype}%'
+			</if>
+			<if test="p1!=null">
+				and price &gt;=#{p1}
+			</if>
+			<if test="p2!=null">
+				and price &lt;=#{p2}
+			</if>
+			<if test="gname!=null and gname!=''">
+				and goods.gname like '%${gname}%'
+			</if>
+		</where>
+		group by goods.gid
+	</select> 
+	<resultMap type="Goods" id="goodsMap">
+		<id property="gid" column="gid"/>
+		<result property="gname" column="gname"/>
+		<result property="english" column="english"/>
+		<result property="size" column="size"/>
+		<result property="price" column="price"/>
+		<result property="num" column="num"/>
+		<result property="txt" column="txt"/>
+		<result property="pic" column="pic"/>
+		<collection property="brands" ofType="Brand"
+			column="gid"
+			select="findByGid"
+		></collection>
+	</resultMap>
+	<select id="findByGid" resultType="Brand">
+		select * from brand join gb on brand.bid=gb.bid
+		where gb.gid=#{gid}
+	</select>
+
+	<select id="toAdd" resultType="Brand">
+		select * from brand
+	</select>
+	<insert id="addGoods" useGeneratedKeys="true" keyProperty="gid">
+		insert into goods values(null,#{gname},#{english},#{size},#{price},#{num},#{txt},#{pic},#{bbrand},#{btype})
+	</insert>
+	<insert id="addgb">
+		insert into gb values
+		<foreach collection="bids" item="bid" separator=",">
+			(#{gid},#{bid})
+		</foreach>
+	</insert>
+</mapper>
